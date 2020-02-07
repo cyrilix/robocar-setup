@@ -1,0 +1,13 @@
+---
+
+donkey_username: pi
+donkey_groupname: pi
+donkey_home_dir: /home/{{ donkey_username }}
+
+donkey_git_repo: https://github.com/cyrilix/donkey.git
+donkey_git_branch: master
+
+donkey_sources: "{{ donkey_home_dir }}/donkeycar"
+donkey_virtualenv_dir: "{{ donkey_home_dir }}/venv"
+
+donkey_data_dir: "{{ donkey_home_dir }}/data"

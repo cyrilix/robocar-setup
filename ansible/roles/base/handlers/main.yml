@@ -1,0 +1,9 @@
+---
+- name: expand filesystem
+  shell: resize2fs /dev/mmcblk0p2
+  notify:
+    - reboot
+
+- name: reboot
+  reboot:
+

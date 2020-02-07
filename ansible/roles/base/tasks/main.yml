@@ -1,0 +1,67 @@
+---
+- name: Set default language to FR
+  template:
+    src: locale
+    dest: /etc/default/locale
+
+- name: Set locales
+  template:
+    src: locale.gen
+    dest: /etc/locale.gen
+  register: locale
+
+- name: Generate locales
+  shell: dpkg-reconfigure -f noninteractive locales
+  when: locale.changed
+
+- name: Set timezone
+  timezone:
+    name: Europe/Paris
+
+
+- name: Set hostname resolution
+  replace:
+      path: /etc/hosts
+      regexp: '(\s+)raspberrypi(\s+.*)?$'
+      replace: '\1{{ ansible_hostname }}\2'
+
+- name: Install basic tools
+  apt:
+    name:
+    - cpufrequtils
+    - vim
+    - git
+    - python3
+    - python3-pip
+    - python-apt
+    state: present
+    update_cache: yes
+
+- name: Copy ssh authorized keys file
+  copy:
+    src: authorized_keys
+    dest: /home/pi/.ssh/authorized_keys
+    owner: pi
+    group: pi
+    mode: 0600
+
+- name: Files configuration
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: pi
+    group: pi
+  with_items:
+    - src: vimrc
+      dest: /home/pi/.vimrc
+    - src: alias
+      dest: /home/pi/.alias
+    - src: bashrc
+      dest: /home/pi/.bashrc
+    - src: gitconfig
+      dest: /home/pi/.gitconfig
+
+
+- include_tasks: hardware.yml
+
+

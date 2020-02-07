@@ -1,0 +1,27 @@
+[color]
+    branch = auto
+    diff = auto
+    interactive = auto
+    status = auto
+    ui = auto
+
+[i18n]
+    commitEncoding = UTF-8
+    logOutputEncoding = UTF-8
+
+[alias]
+    co = checkout
+    history = log --all --graph --abbrev-commit --pretty=format:'%C(auto)%h [%ad] %d %s %C(reset) - %aN' --date=short
+    h = log --all --graph --abbrev-commit --pretty=format:'%C(auto)%h [%ad] %d %s %C(reset) - %aN' --date=short
+
+[mergetool]
+    prompt = false
+    keepBackup = false
+    keepTemporaries = false
+
+[pull]
+    rebase = true
+
+[push]
+    default = simple
+

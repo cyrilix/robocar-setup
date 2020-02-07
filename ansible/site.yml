@@ -1,0 +1,18 @@
+---
+
+- hosts: car
+  become: yes
+  roles:
+    - { role: base, tags: [base]}
+
+- hosts: microservice
+  become: yes
+  roles:
+    - { role: rabbitmq, tags: [rabbitmq] }
+    - { role: docker, tags: [docker] }
+
+- hosts: donkey
+  become: yes
+  roles:
+    - { role: python, tags: [python]}
+    - { role: donkey, tags: [donkey] }

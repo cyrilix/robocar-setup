@@ -1,0 +1,16 @@
+---
+
+- name: Make data directory
+  file:
+    path: "{{ donkey_data_dir }}"
+    owner: "{{ donkey_username }}"
+    group: "{{ donkey_groupname }}"
+    state: directory
+
+- name: Make tmpfs
+  mount:
+    path: "{{ donkey_data_dir }}"
+    src: tmpfs
+    fstype: tmpfs
+    opts: defaults
+    state: mounted

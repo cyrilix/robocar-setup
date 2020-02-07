@@ -1,0 +1,53 @@
+
+#  Gestion du ls : couleur + touche pas aux accents
+alias ls='ls --classify --tabsize=0 --literal --color=auto --show-control-chars --human-readable'
+alias lc='ls --classify --tabsize=0 --literal --color=always --show-control-chars --human-readable'
+
+# Demande confirmation avant d'écraser un fichier
+alias cp='cp --interactive'
+alias mv='mv --interactive'
+#alias rm='rm --interactive'
+
+# Raccourcis pour 'ls'
+alias ll='ls -lh'
+alias llc='ls -lh --color=always'
+alias la='ls -a'
+alias lac='ls -a --color=always'
+alias lla='ls -lha'
+alias llac='ls -lha --color=always'
+
+# Quelques alias pratiques
+alias c='clear'
+alias s='cd ..'
+alias df='df --human-readable'
+alias du='du --human-readable'
+alias grec='egrep --color=always'
+
+#APT
+alias apts='aptitude search'
+alias aptn='aptitude search \~N'
+alias aptsh='apt show'
+alias apti='apt install'
+alias aptp='apt purge'
+alias aptr='apt remove'
+alias aptfug='apt full-upgrade'
+alias aptug='apt upgrade'
+alias aptu='apt update'
+alias aptlu='apt list --upgradable'
+alias aptf='aptitude forget-new'
+
+alias sshr="ssh -X root@`hostname --short`.local"
+
+alias free='free -h'
+
+alias diff=colordiff
+alias gh="git history"
+
+alias v=view
+
+if [ -f ~/.alias_custom ]
+then
+    source ~/.alias_custom
+fi
+
+

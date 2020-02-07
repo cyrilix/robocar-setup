@@ -1,0 +1,42 @@
+---
+
+- name: Deploy raspberry config
+  template:
+    src: config.txt
+    dest: /boot/config.txt
+  notify: reboot
+
+- name: Set pi user in groups
+  user:
+    name: pi
+    groups: tty,dialout
+
+#- name: Disable console
+#  replace:
+#      path: /boot/cmdline.txt
+#      regexp: '(.*) console=[^ ]+(\s+.*)?$'
+#      replace: '\1\2'
+#  notify: reboot
+
+#- name: Disable tty use
+#  systemd:
+#    name: getty@tty1.service
+#    masked: yes
+#    enabled: no
+#    daemon_reload: yes
+#  notify: reboot
+
+
+- name: Set group on camera device
+  copy:
+    src: 10-vchiq-permissions.rules
+    dest: /etc/udev/rules.d/10-vchiq-permissions.rules
+  notify: reboot
+
+
+- name: Set groups to pi user
+  user:
+    name: pi
+    groups: tty,video
+
+- meta: flush_handlers

@@ -1,0 +1,2 @@
+# Activate virtualenv
+source {{ donkey_virtualenv_dir }}/bin/activate
