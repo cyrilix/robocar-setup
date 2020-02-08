@@ -10,6 +10,8 @@
   roles:
     - { role: rabbitmq, tags: [rabbitmq] }
     - { role: docker, tags: [docker] }
+    - { role: microservices, tags: [microservices, ms] }
+
 
 - hosts: donkey
   become: yes
