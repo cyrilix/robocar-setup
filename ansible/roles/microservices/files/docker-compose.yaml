@@ -37,10 +37,10 @@ services:
       MQTT_USERNAME: "${MQTT_USERNAME}"
       MQTT_PASSWORD: "${MQTT_PASSWORD}"
       MQTT_CLIENT_ID: rc-arduino
-      MQTT_TOPIC_THROTTLE: "${{ MQTT_TOPIC_RC_THROTTLE }}"
-      MQTT_TOPIC_STEERING: "${{ MQTT_TOPIC_RC_STEERING }}"
-      MQTT_TOPIC_DRIVE_MODE: "${{ MQTT_TOPIC_RC_DRIVE_MODE }}"
-      MQTT_TOPIC_SWITCH_RECORD: "${{ MQTT_TOPIC_RC_SWITCH_RECORD }}"
+      MQTT_TOPIC_THROTTLE: "${MQTT_TOPIC_RC_THROTTLE}"
+      MQTT_TOPIC_STEERING: "${MQTT_TOPIC_RC_STEERING}"
+      MQTT_TOPIC_DRIVE_MODE: "${MQTT_TOPIC_RC_DRIVE_MODE}"
+      MQTT_TOPIC_SWITCH_RECORD: "${MQTT_TOPIC_RC_SWITCH_RECORD}"
       MQTT_QOS: "0"
       TZ: "Europe/Paris"
 
@@ -83,8 +83,8 @@ services:
       MQTT_USERNAME: "${MQTT_USERNAME}"
       MQTT_PASSWORD: "${MQTT_PASSWORD}"
       MQTT_CLIENT_ID: rc-pca9685
-      MQTT_TOPIC_THROTTLE: "${{ MQTT_TOPIC_THROTTLE }}"
-      MQTT_TOPIC_STEERING: "${{ MQTT_TOPIC_STEERING }}"
+      MQTT_TOPIC_THROTTLE: "${MQTT_TOPIC_THROTTLE}"
+      MQTT_TOPIC_STEERING: "${MQTT_TOPIC_STEERING}"
       MQTT_QOS: "0"
       TZ: "Europe/Paris"
 
@@ -96,7 +96,7 @@ services:
     volumes:
     - /home/pi/models/steering:/model
     environment:
-      MQTT_BROKER: "${MQTT_BROKER}"
+      MQTT_BROKER: "${MQTT_BROKER_HOST}"
       MQTT_USERNAME: "${MQTT_USERNAME}"
       MQTT_PASSWORD: "${MQTT_PASSWORD}"
       MQTT_CLIENT_ID: rc-tflite-steering
@@ -107,7 +107,8 @@ services:
 
   steering:
     image: cyrilix/robocar-steering
-    command: ""
+    command:
+      - "-mqtt-retain=false"
     user: "1234:1234"
     network_mode: host
     environment:
@@ -134,7 +135,7 @@ services:
       MQTT_PASSWORD: "${MQTT_PASSWORD}"
       MQTT_CLIENT_ID: rc-throttle
       MQTT_TOPIC_THROTTLE: "${MQTT_TOPIC_THROTTLE}"
-      MQTT_TOPIC_RC_THROTTLE: "${{ MQTT_TOPIC_RC_THROTTLE }}"
+      MQTT_TOPIC_RC_THROTTLE: "${MQTT_TOPIC_RC_THROTTLE}"
       MQTT_TOPIC_DRIVE_MODE: "${MQTT_TOPIC_RC_DRIVE_MODE}"
       THROTTLE_MIN: "0.3"
       THROTTLE_MAX: "0.4"
@@ -191,6 +192,7 @@ services:
       MQTT_CLIENT_ID: rc-record
       MQTT_TOPIC_CAMERA: "${MQTT_TOPIC_CAMERA}"
       MQTT_TOPIC_STEERING: "${MQTT_TOPIC_RC_STEERING}"
-      MQTT_TOPIC_SWITCH_RECORD: "${MQTT_TOPIC_RC_SWITCH_RECORD"
+      MQTT_TOPIC_SWITCH_RECORD: "${MQTT_TOPIC_RC_SWITCH_RECORD}"
+      MQTT_TOPIC_RECORDS: "${MQTT_TOPIC_RECORDS}"
       MQTT_QOS: "0"
       TZ: "Europe/Paris"
