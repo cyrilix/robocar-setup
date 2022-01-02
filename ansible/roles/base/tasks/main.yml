@@ -33,7 +33,7 @@
     - git
     - python3
     - python3-pip
-    - python-apt
+    - python3-apt
     state: present
     update_cache: yes
 

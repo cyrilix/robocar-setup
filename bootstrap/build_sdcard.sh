@@ -13,12 +13,14 @@ WIFI_SECRET_FILE=".secret"
 # For debug
 ADD_TTL_SUPPORT_FOR_DEBUG=1
 
+IMAGE_BASE=https://downloads.raspberrypi.org/raspios_lite_arm64_latest
+
 ########### End Configuration ############
 mkdir -p build
 
 if [ ! -f build/raspbian.zip ]
 then
-    wget -O build/raspbian.zip https://downloads.raspberrypi.org/raspbian_lite_latest
+    wget -O build/raspbian.zip ${IMAGE_BASE}
     cd build
     unzip raspbian.zip
     cd ..
@@ -46,6 +48,11 @@ then
     echo "dtoverlay=pi3-disable-bt" | sudo tee -a build/mnt/config.txt > /dev/null
 fi
 
+echo "Copy wifi configuration"
+source ${WIFI_SECRET_FILE}
+eval "echo \"$(cat wpa_supplicant.conf)\"" | sudo tee build/mnt/wpa_supplicant.conf > /dev/null
+sudo chmod 600 build/mnt/wpa_supplicant.conf
+
 echo "Umount boot partition"
 sudo umount build/mnt
 
@@ -66,10 +73,6 @@ sudo cp ../ansible/roles/base/files/authorized_keys build/mnt/home/pi/.ssh/
 sudo chmod 600 build/mnt/home/pi/.ssh/authorized_keys
 sudo chown -R 1000:1000 build/mnt/home/pi
 
-echo "Copy wifi configuration"
-source ${WIFI_SECRET_FILE}
-eval "echo \"$(cat wpa_supplicant.conf)\"" | sudo tee build/mnt/etc/wpa_supplicant/wpa_supplicant.conf > /dev/null
-sudo chmod 600 build/mnt/etc/wpa_supplicant/wpa_supplicant.conf
 
 
 echo "Umount sdcard"

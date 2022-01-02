@@ -1,13 +1,16 @@
 ---
 - name: Install ansible dependencies
   apt:
-    name: "python-requests"
+    name: "python3-requests"
     state: present
 
 - name: Install rabbitmq package
   apt:
     name: rabbitmq-server
     state: present
+  with_items:
+    - rabbitmq-server
+    - python3-requests
 
 - name: Enables rabbitmq plugins
   rabbitmq_plugin:

@@ -14,7 +14,7 @@
 - name: Install docker-ce
   apt:
     name:
-    - python-pip
+    - python3-pip
     - docker-ce
     - xfsprogs
     state: present
