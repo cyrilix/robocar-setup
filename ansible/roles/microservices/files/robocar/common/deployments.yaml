@@ -1,0 +1,616 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arduino
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  revisionHistoryLimit: 0
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      component: arduino
+  template:
+    metadata:
+      labels:
+        component: arduino
+    spec:
+      containers:
+        - name: arduino
+          image: docker.io/cyrilix/robocar-arduino
+          args:
+            - "-device=/dev/ttyAMA1"
+            - "-baud=115200"
+            - "-mqtt-retain=false"
+            - "-debug=true"
+          volumeMounts:
+            - mountPath: "/dev/ttyAMA1"
+              name: serial
+          securityContext:
+            privileged: true
+            runAsUser: 1234
+            runAsGroup: 20 # Set 20/dialout group to access to serial device
+          env:
+            - name: MQTT_BROKER
+              valueFrom:
+                configMapKeyRef:
+                  key: MQTT_BROKER
+                  name: robocar
+            - name: MQTT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: MQTT_USERNAME
+                  name: mqtt-credentials
+            - name: MQTT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: MQTT_PASSWORD
+                  name: mqtt-credentials
+            - name: MQTT_CLIENT_ID
+              value: rc-arduino
+            - name: MQTT_TOPIC_THROTTLE
+              valueFrom:
+                configMapKeyRef:
+                  key: MQTT_TOPIC_RC_THROTTLE
+                  name: robocar
+            - name: MQTT_TOPIC_STEERING
+              valueFrom:
+                configMapKeyRef:
+                  key: MQTT_TOPIC_RC_STEERING
+                  name: robocar
+            - name: MQTT_TOPIC_DRIVE_MODE
+              valueFrom:
+                configMapKeyRef:
+                  key: MQTT_TOPIC_RC_DRIVE_MODE
+                  name: robocar
+            - name: MQTT_TOPIC_SWITCH_RECORD
+              valueFrom:
+                configMapKeyRef:
+                  key: MQTT_TOPIC_RC_SWITCH_RECORD
+                  name: robocar
+            - name: MQTT_QOS
+              value: "0"
+            - name: TZ
+              value: "Europe/Paris"
+      volumes:
+        - name: serial
+          hostPath:
+            path: /dev/ttyAMA1
+            type: CharDevice
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: led
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  revisionHistoryLimit: 0
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      component: led
+  template:
+    metadata:
+      labels:
+        component: led
+    spec:
+      containers:
+      - name: led
+        image: docker.io/cyrilix/robocar-led
+        args:
+        - "-mqtt-retain=false"
+        - "-log=info"
+        volumeMounts:
+        - name: gpiomem
+          mountPath: "/dev/gpiomem"
+        - name: gpiochip0
+          mountPath: "/dev/gpiochip0"
+        - name: gpiochip1
+          mountPath: "/dev/gpiochip1"
+        securityContext:
+          privileged: true
+          runAsUser: 1234
+          runAsGroup: 997 # Set 997/gpio group to access to serial device
+        env:
+        - name: MQTT_BROKER
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_BROKER
+              name: robocar
+        - name: MQTT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: MQTT_USERNAME
+              name: mqtt-credentials
+        - name: MQTT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: MQTT_PASSWORD
+              name: mqtt-credentials
+        - name: MQTT_CLIENT_ID
+          value: rc-led
+        - name: MQTT_TOPIC_DRIVE_MODE
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_TOPIC_RC_DRIVE_MODE
+              name: robocar
+        - name: MQTT_TOPIC_RECORD
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_TOPIC_RC_SWITCH_RECORD
+              name: robocar
+        - name: MQTT_QOS
+          value: "0"
+        - name: TZ
+          value: "Europe/Paris"
+      volumes:
+      - name: gpiomem
+        hostPath:
+          path: /dev/gpiomem
+          type: CharDevice
+      - name: gpiochip0
+        hostPath:
+          path: /dev/gpiochip0
+          type: CharDevice
+      - name: gpiochip1
+        hostPath:
+          path: /dev/gpiochip1
+          type: CharDevice
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tflite-steering
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  revisionHistoryLimit: 0
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      component: tflite-steering
+  template:
+    metadata:
+      labels:
+        component: tflite-steering
+    spec:
+      containers:
+      - name: tflite-steering
+        image: docker.io/cyrilix/robocar-steering-tflite-edgetpu
+        args:
+        - "--model=/model/$(MODEL_STEERING)"
+        - "--edge-verbosity=0"
+        - "--img-width=$(MODEL_IMAGE_WIDTH)"
+        - "--img-height=$(MODEL_IMAGE_HEIGHT)"
+        - "--horizon=$(HORIZON)"
+        - "--log=info"
+        securityContext:
+          runAsUser: 0
+          runAsGroup: 0
+          privileged: true
+        volumeMounts:
+        - name: models
+          mountPath: /model
+        - name: bus-usb
+          mountPath: /dev/bus/usb
+        - name: sys
+          mountPath: /sys
+        env:
+        - name: MQTT_BROKER
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_BROKER
+              name: robocar
+        - name: MQTT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: MQTT_USERNAME
+              name: mqtt-credentials
+        - name: MQTT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: MQTT_PASSWORD
+              name: mqtt-credentials
+        - name: MQTT_CLIENT_ID
+          value: rc-tflite-steering
+        - name: MQTT_TOPIC_CAMERA
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_TOPIC_CAMERA
+              name: robocar
+        - name: MQTT_TOPIC_STEERING
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_TOPIC_TF_STEERING
+              name: robocar
+        - name: MODEL_STEERING
+          valueFrom:
+            configMapKeyRef:
+              key: MODEL_STEERING
+              name: robocar-models
+        - name: MODEL_IMAGE_WIDTH
+          valueFrom:
+            configMapKeyRef:
+              key: MODEL_IMAGE_WIDTH
+              name: robocar-models
+        - name: MODEL_IMAGE_HEIGHT
+          valueFrom:
+            configMapKeyRef:
+              key: MODEL_IMAGE_HEIGHT
+              name: robocar-models
+        - name: HORIZON
+          valueFrom:
+            configMapKeyRef:
+              key: HORIZON
+              name: robocar-models
+        - name: MQTT_QOS
+          value: "0"
+        - name: LD_LIBRARY_PATH
+          value: "/usr/local/lib/:/usr/lib"
+        - name: TZ
+          value: "Europe/Paris"
+      volumes:
+      - name: models
+        hostPath:
+          path: /home/pi/models/steering
+          type: DirectoryOrCreate
+      - name: bus-usb
+        hostPath:
+          path: /dev/bus/usb
+      - name: sys
+        hostPath:
+          path: /sys
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: steering
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  revisionHistoryLimit: 0
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      component: steering
+  template:
+    metadata:
+      labels:
+        component: steering
+    spec:
+      containers:
+        - name: steering
+          image: docker.io/cyrilix/robocar-steering
+          args:
+          - "-mqtt-retain=false"
+          - "-debug=false"
+          securityContext:
+            runAsUser: 1234
+            runAsGroup: 1234
+          env:
+          - name: MQTT_BROKER
+            valueFrom:
+              configMapKeyRef:
+                key: MQTT_BROKER
+                name: robocar
+          - name: MQTT_USERNAME
+            valueFrom:
+              secretKeyRef:
+                key: MQTT_USERNAME
+                name: mqtt-credentials
+          - name: MQTT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: MQTT_PASSWORD
+                name: mqtt-credentials
+          - name: MQTT_CLIENT_ID
+            value: rc-steering
+          - name: MQTT_TOPIC_STEERING
+            valueFrom:
+              configMapKeyRef:
+                key: MQTT_TOPIC_STEERING
+                name: robocar
+          - name: MQTT_TOPIC_TF_STEERING
+            valueFrom:
+              configMapKeyRef:
+                key: MQTT_TOPIC_TF_STEERING
+                name: robocar
+          - name: MQTT_TOPIC_RC_STEERING
+            valueFrom:
+              configMapKeyRef:
+                key: MQTT_TOPIC_RC_STEERING
+                name: robocar
+          - name: MQTT_TOPIC_DRIVE_MODE
+            valueFrom:
+              configMapKeyRef:
+                key: MQTT_TOPIC_RC_DRIVE_MODE
+                name: robocar
+          - name: MQTT_QOS
+            value: "0"
+          - name: TZ
+            value: "Europe/Paris"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: throttle
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  revisionHistoryLimit: 0
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      component: throttle
+  template:
+    metadata:
+      labels:
+        component: throttle
+    spec:
+      containers:
+      - name: throttle
+        image: docker.io/cyrilix/robocar-throttle
+        args:
+        - "-mqtt-retain=false"
+        - "-debug=false"
+        securityContext:
+          runAsUser: 1234
+          runAsGroup: 1234
+        env:
+        - name: MQTT_BROKER
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_BROKER
+              name: robocar
+        - name: MQTT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: MQTT_USERNAME
+              name: mqtt-credentials
+        - name: MQTT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: MQTT_PASSWORD
+              name: mqtt-credentials
+        - name: MQTT_CLIENT_ID
+          value: rc-throttle
+        - name: MQTT_TOPIC_THROTTLE
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_TOPIC_THROTTLE
+              name: robocar
+        - name: MQTT_TOPIC_RC_THROTTLE
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_TOPIC_RC_THROTTLE
+              name: robocar
+        - name: MQTT_TOPIC_DRIVE_MODE
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_TOPIC_RC_DRIVE_MODE
+              name: robocar
+        - name: THROTTLE_MIN
+          valueFrom:
+            configMapKeyRef:
+              key: THROTTLE_MIN
+              name: robocar-throttle
+        - name: THROTTLE_MAX
+          valueFrom:
+            configMapKeyRef:
+              key: THROTTLE_MAX
+              name: robocar-throttle
+        - name: MQTT_QOS
+          value: "0"
+        - name: TZ
+          value: "Europe/Paris"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recorder
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  revisionHistoryLimit: 0
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      component: recorder
+  template:
+    metadata:
+      labels:
+        component: recorder
+    spec:
+      containers:
+        - name: recorder
+          image: docker.io/cyrilix/robocar-recorder-store
+          args:
+            - "-mqtt-retain=true"
+            - "-record-path=/records"
+            - "-log=info"
+          env:
+            - name: MQTT_BROKER
+              valueFrom:
+                configMapKeyRef:
+                  key: MQTT_BROKER
+                  name: robocar
+            - name: MQTT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: MQTT_USERNAME
+                  name: mqtt-credentials
+            - name: MQTT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: MQTT_PASSWORD
+                  name: mqtt-credentials
+            - name: MQTT_CLIENT_ID
+              value: rc-recorder
+            - name: MQTT_TOPIC_RECORDS
+              valueFrom:
+                configMapKeyRef:
+                  key: MQTT_TOPIC_RECORDS
+                  name: robocar
+            - name: MQTT_QOS
+              value: "0"
+            - name: TZ
+              value: "Europe/Paris"
+          volumeMounts:
+            - mountPath: /records
+              name: records
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+      volumes:
+        - name: records
+          hostPath:
+            path: /home/pi/records
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: record
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  revisionHistoryLimit: 0
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      component: record
+  template:
+    metadata:
+      labels:
+        component: record
+    spec:
+      containers:
+      - name: record
+        image: docker.io/cyrilix/robocar-record
+        args:
+        - "-mqtt-retain=true"
+        - "-debug=false"
+        securityContext:
+          runAsUser: 1234
+          runAsGroup: 1234
+        env:
+        - name: MQTT_BROKER
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_BROKER
+              name: robocar
+        - name: MQTT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: MQTT_USERNAME
+              name: mqtt-credentials
+        - name: MQTT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: MQTT_PASSWORD
+              name: mqtt-credentials
+        - name: MQTT_CLIENT_ID
+          value: rc-record
+        - name: MQTT_TOPIC_CAMERA
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_TOPIC_CAMERA
+              name: robocar
+        - name: MQTT_TOPIC_STEERING
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_TOPIC_RC_STEERING
+              name: robocar
+        - name: MQTT_TOPIC_SWITCH_RECORD
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_TOPIC_RC_SWITCH_RECORD
+              name: robocar
+        - name: MQTT_TOPIC_RECORDS
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_TOPIC_RECORDS
+              name: robocar
+        - name: MQTT_QOS
+          value: "0"
+        - name: TZ
+          value: "Europe/Paris"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: road
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  revisionHistoryLimit: 0
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      component: road
+  template:
+    metadata:
+      labels:
+        component: road
+    spec:
+      containers:
+        - name: road
+          image: docker.io/cyrilix/robocar-road
+          args:
+            - "-mqtt-retain=false"
+            - "--log=info"
+          securityContext:
+            runAsUser: 1234
+            runAsGroup: 1234
+          env:
+            - name: MQTT_BROKER
+              valueFrom:
+                configMapKeyRef:
+                  key: MQTT_BROKER
+                  name: robocar
+            - name: MQTT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: MQTT_USERNAME
+                  name: mqtt-credentials
+            - name: MQTT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: MQTT_PASSWORD
+                  name: mqtt-credentials
+            - name: MQTT_CLIENT_ID
+              value: rc-road
+            - name: MQTT_TOPIC_CAMERA
+              valueFrom:
+                configMapKeyRef:
+                  key: MQTT_TOPIC_CAMERA
+                  name: robocar
+            - name: MQTT_TOPIC_ROAD
+              valueFrom:
+                configMapKeyRef:
+                  key: MQTT_TOPIC_ROAD
+                  name: robocar
+            - name: MQTT_QOS
+              value: "0"
+            - name: TZ
+              value: "Europe/Paris"

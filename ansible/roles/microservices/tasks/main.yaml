@@ -5,7 +5,13 @@
     src: env
     dest: /home/pi/.env
 
-- name: Copy docker-compose file
+- name: Copy stack file
   copy:
-    src: docker-compose.yaml
+    src: "{{ item }}"
     dest: /home/pi/
+  with_items:
+    - docker-compose.yaml
+    - simulator-compose.yaml
+    - car.yaml
+    - robocar.yaml
+    - simulator.yaml

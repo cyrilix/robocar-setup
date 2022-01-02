@@ -1,0 +1,161 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: camera
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  revisionHistoryLimit: 0
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      component: camera
+  template:
+    metadata:
+      labels:
+        component: camera
+    spec:
+      containers:
+        - name: camera
+          image: docker.io/cyrilix/robocar-camera
+          args:
+          - "-mqtt-pub-frequency=$(MQTT_CAMERA_PUB_FREQUENCY)"
+          - "-video-device=0"
+          - "-video-width=$(CAMERA_WIDTH)"
+          - "-video-height=$(CAMERA_HEIGHT)"
+          - "-debug=false"
+          securityContext:
+            runAsUser: 1234
+            runAsGroup: 44 # Set 44/video group to access to video device
+            privileged: true
+          volumeMounts:
+            - name: camera-device
+              mountPath: /dev/video0
+          env:
+          - name: MQTT_BROKER
+            valueFrom:
+              configMapKeyRef:
+                key: MQTT_BROKER
+                name: robocar
+          - name: MQTT_USERNAME
+            valueFrom:
+              secretKeyRef:
+                key: MQTT_USERNAME
+                name: mqtt-credentials
+          - name: MQTT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: MQTT_PASSWORD
+                name: mqtt-credentials
+          - name: MQTT_CLIENT_ID
+            value: rc-camera
+          - name: MQTT_TOPIC
+            valueFrom:
+              configMapKeyRef:
+                key: MQTT_TOPIC_CAMERA
+                name: robocar
+          - name: CAMERA_WIDTH
+            valueFrom:
+              configMapKeyRef:
+                key: CAMERA_WIDTH
+                name: robocar-camera
+          - name: CAMERA_HEIGHT
+            valueFrom:
+              configMapKeyRef:
+                key: CAMERA_HEIGHT
+                name: robocar-camera
+          - name: MQTT_CAMERA_PUB_FREQUENCY
+            valueFrom:
+              configMapKeyRef:
+                key: MQTT_CAMERA_PUB_FREQUENCY
+                name: robocar-camera
+          - name: MQTT_QOS
+            value: "0"
+          - name: TZ
+            value: "Europe/Paris"
+      volumes:
+        - name: camera-device
+          hostPath:
+            path: "/dev/video0"
+            type: CharDevice
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pca9685
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  revisionHistoryLimit: 0
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      component: pca9685
+  template:
+    metadata:
+      labels:
+        component: pca9685
+    spec:
+      containers:
+        - name: pca9685
+          image: cyrilix/robocar-pca9685:v0.3.0
+          args:
+          - "-mqtt-retain=false"
+          - "-throttle-channel=1"
+          - "-steering-channel=0"
+          - "-throttle-zero-pwm=378"
+          - "-throttle-min-pwm=250"
+          - "-throttle-max-pwm=500"
+          - "-steering-left-pwm=490"
+          - "-steering-right-pwm=265"
+          - "-update-pwm-frequency=10"
+          - "-debug=false"
+          securityContext:
+            runAsUser: 1234
+            runAsGroup: 998 # Set 998/i2c group to access to i2c device
+            privileged: true
+          volumeMounts:
+            - mountPath: /dev/i2c-1
+              name: i2c
+          env:
+            - name: MQTT_BROKER
+              valueFrom:
+                configMapKeyRef:
+                  key: MQTT_BROKER
+                  name: robocar
+            - name: MQTT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: MQTT_USERNAME
+                  name: mqtt-credentials
+            - name: MQTT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: MQTT_PASSWORD
+                  name: mqtt-credentials
+            - name: MQTT_CLIENT_ID
+              value: rc-pca9685
+            - name: MQTT_TOPIC_THROTTLE
+              valueFrom:
+                configMapKeyRef:
+                  key: MQTT_TOPIC_THROTTLE
+                  name: robocar
+            - name: MQTT_TOPIC_STEERING
+              valueFrom:
+                configMapKeyRef:
+                  key: MQTT_TOPIC_STEERING
+                  name: robocar
+            - name: MQTT_QOS
+              value: "0"
+            - name: TZ
+              value: "Europe/Paris"
+      volumes:
+        - name: i2c
+          hostPath:
+            path: /dev/i2c-1
+            type: CharDevice

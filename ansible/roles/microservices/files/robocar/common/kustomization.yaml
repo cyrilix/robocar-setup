@@ -1,0 +1,34 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - deployments.yaml
+  - endpoints.yaml
+  - services.yaml
+  - configmap.yaml
+
+images:
+  - name: docker.io/cyrilix/robocar-arduino
+    newTag: v0.4.0
+
+  - name: docker.io/cyrilix/robocar-led
+    newTag: v0.4.0
+
+  - name: docker.io/cyrilix/robocar-steering-tflite-edgetpu
+    newTag: v0.3.0
+
+  - name: docker.io/cyrilix/robocar-throttle
+    newTag: v0.3.0
+
+  - name: docker.io/cyrilix/robocar-record
+    newTag: v0.4.0
+
+  - name: docker.io/cyrilix/robocar-recorder-store
+    newTag: v0.1.0
+
+  - name: docker.io/cyrilix/robocar-steering
+    newTag: v0.4.0
+
+  - name: docker.io/cyrilix/robocar-road
+    newTag: v0.1.0-4-g70f46bd

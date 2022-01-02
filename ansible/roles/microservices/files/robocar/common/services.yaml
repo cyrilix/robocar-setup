@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mqtt
+spec:
+  type: ClusterIP
+  # Headless service, dns record will use ip endpoint that share same name
+  clusterIP: None
+  ports:
+    - port: 1883
+      name: mqtt
+      protocol: TCP

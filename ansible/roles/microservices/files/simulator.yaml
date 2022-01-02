@@ -1,0 +1,77 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: simulator
+spec:
+  containers:
+    - name: simulator
+      image: docker.io/cyrilix/robocar-simulator
+      args:
+      - "-simulator-address=${SIMULATOR_ADDRESS}"
+      - "-debug=false"
+      - "-car-style=donkey"
+      - "-car-name=Satanas"
+      - "-car-color=100,0,255"
+      - "-camera-img-h=$(CAMERA_HEIGHT)"
+      - "-camera-img-w=$(CAMERA_WIDTH)"
+      securityContext:
+        runAsUser: 1234
+        runAsGroup: 1234
+      env:
+        - name: MQTT_BROKER
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_BROKER
+              name: robocar
+        - name: MQTT_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_USERNAME
+              name: robocar
+        - name: MQTT_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_PASSWORD
+              name: robocar
+        - name: MQTT_CLIENT_ID
+          value: rc-simulator
+        - name: MQTT_TOPIC_CAMERA
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_TOPIC_CAMERA
+              name: robocar
+        - name: MQTT_TOPIC_STEERING
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_TOPIC_SIMULATOR_STEERING
+              name: robocar
+        - name: MQTT_TOPIC_THROTTLE
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_TOPIC_SIMULATOR_THROTTLE
+              name: robocar
+        - name: MQTT_TOPIC_STEERING_CTRL
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_TOPIC_STEERING
+              name: robocar
+        - name: MQTT_TOPIC_THROTTLE_CTRL
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_TOPIC_THROTTLE
+              name: robocar
+        - name: CAMERA_HEIGHT
+          valueFrom:
+            configMapKeyRef:
+              key: CAMERA_HEIGHT
+              name: robocar
+        - name: CAMERA_WIDTH
+          valueFrom:
+            configMapKeyRef:
+              key: CAMERA_WIDTH
+              name: robocar
+        - name: MQTT_QOS
+          value: "0"
+        - name: TZ
+          value: "Europe/Paris"

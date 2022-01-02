@@ -1,0 +1,83 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: robocar
+data:
+  # Broker configuration
+  MQTT_BROKER_HOST: localhost
+  MQTT_BROKER: "tcp://192.168.2.221:1883"
+
+  # Camera
+  MQTT_TOPIC_CAMERA: car/satanas/part/camera
+
+
+  # Radio command
+  MQTT_TOPIC_RC_THROTTLE: car/satanas/part/rc/throttle
+  MQTT_TOPIC_RC_STEERING: car/satanas/part/rc/steering
+  MQTT_TOPIC_RC_SWITCH_RECORD: car/satanas/part/rc/switch_record
+  MQTT_TOPIC_RC_DRIVE_MODE: car/satanas/part/rc/drive_mode
+
+
+  MQTT_TOPIC_TF_STEERING: car/satanas/part/tflite/steering
+
+  # Values to apply
+  MQTT_TOPIC_THROTTLE: car/satanas/part/throttle
+  MQTT_TOPIC_STEERING: car/satanas/part/steering
+
+  # Road detection
+  MQTT_TOPIC_ROAD: car/satanas/part/road
+
+  # Records topic
+  MQTT_TOPIC_RECORDS: car/satanas/part/records
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: robocar-throttle
+data:
+  ############
+  # Throttle #
+  ############
+  THROTTLE_MIN: "0.3"
+  THROTTLE_MAX: "0.4"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: robocar-camera
+data:
+  ##########
+  # Camera #
+  ##########
+  2CAMERA_WIDTH: "160"
+  2CAMERA_HEIGHT: "128"
+
+  CAMERA_WIDTH: "160"
+  CAMERA_HEIGHT: "120"
+
+  MQTT_CAMERA_PUB_FREQUENCY: "30"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: robocar-models
+data:
+  # model to use for steering
+  MODEL_STEERING3: model_edgetpu.tflite
+  MODEL_STEERING: model_160x120h20_edgetpu.tflite
+  MODEL_STEERING2: model-sim-bigimg_edgetpu.tflite
+
+  MODEL_IMAGE_WIDTH: "160"
+  MODEL_IMAGE_HEIGHT: "120"
+  HORIZON: "20"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: robocar-road
+data:
+  HORIZON: "20"

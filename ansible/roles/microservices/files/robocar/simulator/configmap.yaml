@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: robocar-simulator
+data:
+  #############
+  # Simulator #
+  #############
+  SIMULATOR_ADDRESS: "192.168.2.237:9091"
+  MQTT_TOPIC_SIMULATOR_STEERING: car/satanas/part/simulator/steering
+  MQTT_TOPIC_SIMULATOR_THROTTLE: car/satanas/part/simulator/throttle

@@ -1,0 +1,124 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: camera
+spec:
+  containers:
+    - name: camera
+      image: docker.io/cyrilix/robocar-camera
+      args:
+        - "-mqtt-pub-frequency=20"
+        - "-video-device=0"
+        - "-video-width=$(CAMERA_WIDTH)"
+        - "-video-height=$(CAMERA_HEIGHT)"
+      volumeMounts:
+        - name: camera
+          mountPath: "/dev/video0"
+      securityContext:
+        runAsUser: 1234
+        runAsGroup: 44 # Set 44/video group to access to video device
+      env:
+        - name: MQTT_BROKER
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_BROKER
+              name: robocar
+        - name: MQTT_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_USERNAME
+              name: robocar
+        - name: MQTT_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_PASSWORD
+              name: robocar
+        - name: MQTT_CLIENT_ID
+          value: rc-camera
+        - name: MQTT_TOPIC
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_TOPIC_CAMERA
+              name: robocar
+        - name: CAMERA_HEIGHT
+          valueFrom:
+            configMapKeyRef:
+              key: CAMERA_HEIGHT
+              name: robocar
+        - name: CAMERA_WIDTH
+          valueFrom:
+            configMapKeyRef:
+              key: CAMERA_WIDTH
+              name: robocar
+        - name: MQTT_QOS
+          value: "0"
+        - name: TZ
+          value: "Europe/Paris"
+    #network_mode: host
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pca9685
+spec:
+  containers:
+    - name: pca9685
+      image: docker.io/cyrilix/robocar-pca9685:v0.2.0
+      args:
+        - "-mqtt-retain=false"
+        - "-throttle-channel=1"
+        - "-steering-channel=0"
+        - "-throttle-zero-pwm=378"
+        - "-throttle-min-pwm=250"
+        - "-throttle-max-pwm=500"
+        - "-steering-left-pwm=490"
+        - "-steering-right-pwm=265"
+        - "-update-pwm-frequency=10"
+        - "-debug=false"
+      volumeMounts:
+        - mountPath: /dev/i2c-1
+          name: i2c
+      securityContext:
+        runAsUser: 1234
+        runAsGroup: 998 # Set 998/i2c group to access to i2c device
+      #network_mode: host
+      env:
+        - name: MQTT_BROKER
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_BROKER
+              name: robocar
+        - name: MQTT_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_USERNAME
+              name: robocar
+        - name: MQTT_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_PASSWORD
+              name: robocar
+        - name: MQTT_CLIENT_ID
+          value: rc-pca9685
+        - name: MQTT_TOPIC_THROTTLE
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_TOPIC_THROTTLE
+              name: robocar
+        - name: MQTT_TOPIC_STEERING
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_TOPIC_STEERING
+              name: robocar
+        - name: MQTT_QOS
+          value: "0"
+        - name: TZ
+          value: "Europe/Paris"
+  volumes:
+    - name: i2c
+      hostPath:
+        path: /dev/i2c-1
+        type: CharDevice
+
