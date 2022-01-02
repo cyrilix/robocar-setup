@@ -1,0 +1,18 @@
+- name: Add apt key
+  apt_key:
+    url:  https://download.docker.com/linux/debian/gpg
+
+- name: Add docker-ce repository
+  apt_repository:
+    repo: deb [arch={{ arch | default('armhf') }}] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable
+    state: present
+    filename: 'docker'
+
+
+- meta: flush_handlers
+
+- name: Install containerd.io
+  apt:
+    name:
+      - containerd.io
+    state: present

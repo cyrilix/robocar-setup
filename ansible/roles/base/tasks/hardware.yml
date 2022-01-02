@@ -2,8 +2,11 @@
 
 - name: Deploy raspberry config
   template:
-    src: config.txt
-    dest: /boot/config.txt
+    src: "{{ item }}"
+    dest: /boot/{{ item }}
+  with_items:
+    - cmdline.txt
+    - config.txt
   notify: reboot
 
 - name: Set pi user in groups
