@@ -10,7 +10,6 @@
     src: "{{ item }}"
     dest: /home/pi/
   with_items:
-    - docker-compose.yaml
     - simulator-compose.yaml
     - car.yaml
     - robocar.yaml
