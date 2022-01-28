@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: robocar-pca9685
+data:
+  ################
+  # STEERING PWM #
+  ################
+  STEERING_LEFT_PWM: "1092"
+  STEERING_RIGHT_PWM: "1986"
+  STEERING_CENTER_PWM: "1583"
+

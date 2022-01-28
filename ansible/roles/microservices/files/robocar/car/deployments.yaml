@@ -26,7 +26,7 @@ spec:
           - "-video-device=0"
           - "-video-width=$(CAMERA_WIDTH)"
           - "-video-height=$(CAMERA_HEIGHT)"
-          - "-debug=false"
+          - "-log=info"
           securityContext:
             runAsUser: 1234
             runAsGroup: 44 # Set 44/video group to access to video device
@@ -103,18 +103,19 @@ spec:
     spec:
       containers:
         - name: pca9685
-          image: cyrilix/robocar-pca9685:v0.3.0
+          image: docker.io/cyrilix/robocar-pca9685
           args:
-          - "-mqtt-retain=false"
-          - "-throttle-channel=1"
-          - "-steering-channel=0"
-          - "-throttle-zero-pwm=378"
-          - "-throttle-min-pwm=250"
-          - "-throttle-max-pwm=500"
-          - "-steering-left-pwm=490"
-          - "-steering-right-pwm=265"
-          - "-update-pwm-frequency=10"
-          - "-debug=false"
+          - "--mqtt-retain=false"
+          - "--throttle-channel=1"
+          - "--steering-channel=0"
+          - "--throttle-zero-pwm=378"
+          - "--throttle-min-pwm=250"
+          - "--throttle-max-pwm=500"
+          - "--steering-left-pwm=$(STEERING_LEFT_PWM)"
+          - "--steering-right-pwm=$(STEERING_RIGHT_PWM)"
+          - "--steering-center-pwm=$(STEERING_CENTER_PWM)"
+          - "--update-pwm-frequency=10"
+          - "--log=info"
           securityContext:
             runAsUser: 1234
             runAsGroup: 998 # Set 998/i2c group to access to i2c device
@@ -152,6 +153,21 @@ spec:
                   name: robocar
             - name: MQTT_QOS
               value: "0"
+            - name: STEERING_LEFT_PWM
+              valueFrom:
+                configMapKeyRef:
+                  name: robocar-pca9685
+                  key: STEERING_LEFT_PWM
+            - name: STEERING_RIGHT_PWM
+              valueFrom:
+                configMapKeyRef:
+                  name: robocar-pca9685
+                  key: STEERING_RIGHT_PWM
+            - name: STEERING_CENTER_PWM
+              valueFrom:
+                configMapKeyRef:
+                  name: robocar-pca9685
+                  key: STEERING_CENTER_PWM
             - name: TZ
               value: "Europe/Paris"
       volumes:

@@ -11,3 +11,4 @@ spec:
     - port: 1883
       name: mqtt
       protocol: TCP
+  ipFamilyPolicy: SingleStack

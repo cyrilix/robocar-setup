@@ -28,7 +28,7 @@ spec:
           - "-car-color=100,0,255"
           - "-camera-img-h=$(CAMERA_HEIGHT)"
           - "-camera-img-w=$(CAMERA_WIDTH)"
-          - "-debug=false"
+          - "-log=info"
           securityContext:
             runAsUser: 1234
             runAsGroup: 1234

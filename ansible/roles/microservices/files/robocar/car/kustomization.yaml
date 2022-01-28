@@ -7,10 +7,11 @@ namespace: robocar
 resources:
   - ../common
   - deployments.yaml
+  - configmap.yaml
 
 images:
   - name: docker.io/cyrilix/robocar-camera
-    newTag: v0.2.0
+    newTag: v0.3.0
 
   - name: docker.io/cyrilix/robocar-pca9685
-    newTag: v0.3.0
+    newTag: v0.4.0-1-gc42086a
