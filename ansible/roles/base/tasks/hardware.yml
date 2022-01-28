@@ -30,11 +30,14 @@
 #  notify: reboot
 
 
-- name: Set group on camera device
+- name: Add udev rules
   copy:
-    src: 10-vchiq-permissions.rules
-    dest: /etc/udev/rules.d/10-vchiq-permissions.rules
+    src: "{{ item }}"
+    dest: /etc/udev/rules.d/{{ item }}
   notify: reboot
+  with_items:
+    - 10-vchiq-permissions.rules
+    - 80-movidius.rules
 
 
 - name: Set groups to pi user

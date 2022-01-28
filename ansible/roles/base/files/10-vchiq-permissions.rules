@@ -1,1 +1,2 @@
+# Set group on camera device
 SUBSYSTEM=="vchiq", GROUP="video", MODE="0660"

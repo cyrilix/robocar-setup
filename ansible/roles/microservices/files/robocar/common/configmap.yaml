@@ -8,7 +8,8 @@ data:
   MQTT_BROKER: "tcp://192.168.2.221:1883"
 
   # Camera
-  MQTT_TOPIC_CAMERA: car/satanas/part/camera
+  MQTT_TOPIC_CAMERA: car/satanas/part/camera/camera/color
+  MQTT_TOPIC_CAMERA_OAK_COLOR: car/satanas/part/camera/color
 
 
   # Radio command
