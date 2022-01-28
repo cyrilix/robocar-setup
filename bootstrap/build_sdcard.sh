@@ -54,6 +54,7 @@ eval "echo \"$(cat wpa_supplicant.conf)\"" | sudo tee build/mnt/wpa_supplicant.c
 sudo chmod 600 build/mnt/wpa_supplicant.conf
 
 echo "Umount boot partition"
+sync
 sudo umount build/mnt
 
 
@@ -74,12 +75,13 @@ sudo chmod 600 build/mnt/home/pi/.ssh/authorized_keys
 sudo chown -R 1000:1000 build/mnt/home/pi
 
 
-
-echo "Umount sdcard"
-sudo umount ./build/mnt
-
 echo "Force disk sync"
 sync
+
+echo "Umount sdcard"
+sleep 2
+sudo umount ./build/mnt
+
 
 echo "Bootstrap finished, plug sdcard on raspberrypi and connect with command:"
 echo "        ssh pi@${HOSTNAME_CAR}.local"
