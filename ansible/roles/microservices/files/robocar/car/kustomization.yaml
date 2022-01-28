@@ -17,4 +17,4 @@ images:
     newTag: v0.4.0-1-gc42086a
 
   - name: docker.io/cyrilix/robocar-oak-camera
-    newTag: v0.0.1-17-g863cddb
+    newTag: v0.1.0
