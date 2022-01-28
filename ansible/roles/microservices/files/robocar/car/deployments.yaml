@@ -108,12 +108,9 @@ spec:
             - "--image-width=$(CAMERA_WIDTH)"
             - "--image-height=$(CAMERA_HEIGHT)"
           securityContext:
-            #runAsUser: 1234
-            #runAsGroup: 44 # Set 44/video group to access to video device
+            runAsUser: 1234
             privileged: true
           volumeMounts:
-            #- name: bus-usb
-            #  mountPath: /dev/bus/usb
             - name: sys
               mountPath: /sys
             - name: dev
@@ -155,14 +152,8 @@ spec:
               value: "0"
             - name: TZ
               value: "Europe/Paris"
-      securityContext:
-        runAsNonRoot: false
-        runAsUser: 0
       hostNetwork: true
       volumes:
-        - name: bus-usb
-          hostPath:
-            path: "/dev/bus/usb"
         - name: sys
           hostPath:
             path: /sys
