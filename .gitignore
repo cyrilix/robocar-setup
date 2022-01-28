@@ -146,6 +146,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-!/bootstrap/.secret
-Supprimerait ansible/roles/docker/templates/
-Supprimerait bootstrap/
+bootstrap/.secret
+bootstrap/build
+
+
