@@ -13,8 +13,8 @@ images:
   - name: docker.io/cyrilix/robocar-camera
     newTag: v0.3.0
 
-  - name: docker.io/cyrilix/robocar-pca9685
-    newTag: v0.5.0
+  - name: docker.io/cyrilix/robocar-pca9685-python
+    newTag: v0.1.0
 
   - name: docker.io/cyrilix/robocar-oak-camera
     newTag: v0.1.0
