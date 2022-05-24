@@ -186,11 +186,13 @@ spec:
         - name: pca9685
           image: docker.io/cyrilix/robocar-pca9685-python
           args:
+          - "steering"
           - "--i2c-bus=1"
           - "--i2c-address=40"
           - "--pca9685-channel=0"
           - "--left-pulse=$(STEERING_LEFT_PWM)"
           - "--right-pulse=$(STEERING_RIGHT_PWM)"
+          - "--debug"
           securityContext:
             runAsUser: 1234
             runAsGroup: 998 # Set 998/i2c group to access to i2c device
@@ -202,7 +204,7 @@ spec:
             - name: MQTT_BROKER
               valueFrom:
                 configMapKeyRef:
-                  key: MQTT_BROKER
+                  key: MQTT_BROKER_HOST
                   name: robocar
             - name: MQTT_USERNAME
               valueFrom:
@@ -215,7 +217,7 @@ spec:
                   key: MQTT_PASSWORD
                   name: mqtt-credentials
             - name: MQTT_CLIENT_ID
-              value: rc-pca9685
+              value: rc-pca9685-steering
             - name: MQTT_TOPIC
               valueFrom:
                 configMapKeyRef:
@@ -266,15 +268,17 @@ spec:
         component: pca9685
     spec:
       containers:
-        - name: pca9685-steering
+        - name: pca9685-throttle
           image: docker.io/cyrilix/robocar-pca9685-python
           args:
+            - "throttle"
             - "--zero-pulse=378"
             - "--min-pulse=250"
             - "--max-pulse=500"
             - "--i2c-bus=1"
             - "--i2c-address=40"
             - "--pca9685-channel=1"
+            - "--debug"
           securityContext:
             runAsUser: 1234
             runAsGroup: 998 # Set 998/i2c group to access to i2c device
@@ -286,7 +290,7 @@ spec:
             - name: MQTT_BROKER
               valueFrom:
                 configMapKeyRef:
-                  key: MQTT_BROKER
+                  key: MQTT_BROKER_HOST
                   name: robocar
             - name: MQTT_USERNAME
               valueFrom:
@@ -299,7 +303,7 @@ spec:
                   key: MQTT_PASSWORD
                   name: mqtt-credentials
             - name: MQTT_CLIENT_ID
-              value: rc-pca9685
+              value: rc-pca9685-throttle
             - name: MQTT_TOPIC
               valueFrom:
                 configMapKeyRef:
