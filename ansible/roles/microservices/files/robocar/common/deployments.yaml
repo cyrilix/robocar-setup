@@ -28,9 +28,9 @@ spec:
             - "--steering-left-pwm=$(STEERING_LEFT_PWM)"
             - "--steering-right-pwm=$(STEERING_RIGHT_PWM)"
             - "--steering-center-pwm=$(STEERING_CENTER_PWM)"
-            - "-log=info"
+            - "-log=debug"
           volumeMounts:
-            - mountPath: "/dev/ttyAMA1"
+            - mountPath: "/dev/ttyAMA0"
               name: serial
           securityContext:
             privileged: true
@@ -96,7 +96,7 @@ spec:
       volumes:
         - name: serial
           hostPath:
-            path: /dev/ttyAMA1
+            path: /dev/ttyAMA0
             type: CharDevice
 
 ---
@@ -525,7 +525,7 @@ spec:
         image: docker.io/cyrilix/robocar-record
         args:
         - "-mqtt-retain=true"
-        - "-debug=false"
+        - "-debug=true"
         securityContext:
           runAsUser: 1234
           runAsGroup: 1234

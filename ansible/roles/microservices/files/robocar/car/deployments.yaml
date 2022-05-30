@@ -195,15 +195,29 @@ spec:
           - "--steering-left-pwm=$(STEERING_LEFT_PWM)"
           - "--steering-right-pwm=$(STEERING_RIGHT_PWM)"
           - "--steering-center-pwm=$(STEERING_CENTER_PWM)"
+          - "--steering-pin=GPIO6"
+          - "--throttle-pin=GPIO12"
           - "--update-pwm-frequency=10"
           - "--log=info"
           securityContext:
-            runAsUser: 1234
-            runAsGroup: 998 # Set 998/i2c group to access to i2c device
+            runAsUser: 0
+            runAsGroup: 997 # Set 998/i2c group to access to i2c device
             privileged: true
           volumeMounts:
+            - mountPath: /dev
+              name: dev
             - mountPath: /dev/i2c-1
               name: i2c
+            #- name: gpiomem
+            #  mountPath: "/dev/gpiomem"
+            #- name: gpiochip0
+            #  mountPath: "/dev/gpiochip0"
+            #- name: gpiochip1
+            #  mountPath: "/dev/gpiochip1"
+            - name: sys
+              mountPath: "/sys"
+            #- name: vcio
+            #  mountPath: "/dev/vcio"
           env:
             - name: MQTT_BROKER
               valueFrom:
@@ -252,7 +266,29 @@ spec:
             - name: TZ
               value: "Europe/Paris"
       volumes:
+        - name: dev
+          hostPath:
+            path: /dev
         - name: i2c
           hostPath:
             path: /dev/i2c-1
+            type: CharDevice
+        - name: gpiomem
+          hostPath:
+            path: /dev/gpiomem
+            type: CharDevice
+        - name: gpiochip0
+          hostPath:
+            path: /dev/gpiochip0
+            type: CharDevice
+        - name: gpiochip1
+          hostPath:
+            path: /dev/gpiochip1
+            type: CharDevice
+        - name: sys
+          hostPath:
+            path: /sys
+        - name: vcio
+          hostPath:
+            path: /dev/vcio
             type: CharDevice
