@@ -187,8 +187,8 @@ spec:
           image: docker.io/cyrilix/robocar-pca9685
           args:
           - "--mqtt-retain=false"
-          - "--throttle-channel=1"
-          - "--steering-channel=0"
+          - "--throttle-channel=15"
+          - "--steering-channel=14"
           - "--throttle-zero-pwm=$(THROTTLE_ZERO_PWM)"
           - "--throttle-min-pwm=$(THROTTLE_MIN_PWM)"
           - "--throttle-max-pwm=$(THROTTLE_MAX_PWM)"
