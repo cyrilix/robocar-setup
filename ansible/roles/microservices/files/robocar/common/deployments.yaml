@@ -28,7 +28,7 @@ spec:
             - "--steering-left-pwm=$(STEERING_LEFT_PWM)"
             - "--steering-right-pwm=$(STEERING_RIGHT_PWM)"
             - "--steering-center-pwm=$(STEERING_CENTER_PWM)"
-            - "-log=debug"
+            - "-log=info"
           volumeMounts:
             - mountPath: "/dev/ttyAMA0"
               name: serial
