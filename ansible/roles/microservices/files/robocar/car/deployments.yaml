@@ -237,32 +237,32 @@ spec:
             - name: STEERING_LEFT_PWM
               valueFrom:
                 configMapKeyRef:
-                  name: robocar-pca9685
+                  name: robocar-steering-pwm
                   key: STEERING_LEFT_PWM
             - name: STEERING_RIGHT_PWM
               valueFrom:
                 configMapKeyRef:
-                  name: robocar-pca9685
+                  name: robocar-steering-pwm
                   key: STEERING_RIGHT_PWM
             - name: STEERING_CENTER_PWM
               valueFrom:
                 configMapKeyRef:
-                  name: robocar-pca9685
+                  name: robocar-steering-pwm
                   key: STEERING_CENTER_PWM
             - name: THROTTLE_MIN_PWM
               valueFrom:
                 configMapKeyRef:
-                  name: robocar-pca9685
+                  name: robocar-throttle-pwm
                   key: THROTTLE_MIN_PWM
             - name: THROTTLE_MAX_PWM
               valueFrom:
                 configMapKeyRef:
-                  name: robocar-pca9685
+                  name: robocar-throttle-pwm
                   key: THROTTLE_MAX_PWM
             - name: THROTTLE_ZERO_PWM
               valueFrom:
                 configMapKeyRef:
-                  name: robocar-pca9685
+                  name: robocar-throttle-pwm
                   key: THROTTLE_ZERO_PWM
             - name: TZ
               value: "Europe/Paris"

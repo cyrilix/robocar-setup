@@ -7,7 +7,6 @@ namespace: robocar
 resources:
   - ../common
   - deployments.yaml
-  - configmap.yaml
 
 images:
   - name: docker.io/cyrilix/robocar-camera
