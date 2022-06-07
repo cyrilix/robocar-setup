@@ -117,10 +117,7 @@ spec:
               mountPath: /dev
           env:
             - name: MQTT_BROKER
-              valueFrom:
-                configMapKeyRef:
-                  key: MQTT_BROKER_HOST
-                  name: robocar
+              value: localhost # because use host network
             - name: MQTT_USERNAME
               valueFrom:
                 secretKeyRef:

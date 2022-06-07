@@ -8,5 +8,6 @@ metadata:
 subsets:
   - addresses:
       - ip: 192.168.2.221
+      # - ip: 192.168.217.19
     ports:
       - port: 1883
