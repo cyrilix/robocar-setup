@@ -16,7 +16,7 @@ images:
     newTag: v0.5.1
 
   - name: docker.io/cyrilix/robocar-steering-tflite-edgetpu
-    newTag: v0.4.0
+    newTag: v0.4.1
 
   - name: docker.io/cyrilix/robocar-throttle
     newTag: v0.4.1
