@@ -31,4 +31,4 @@ images:
     newTag: v0.5.1
 
   - name: docker.io/cyrilix/robocar-road
-    newTag: v0.1.0-5-gdc6e465
+    newTag: v0.2.0
