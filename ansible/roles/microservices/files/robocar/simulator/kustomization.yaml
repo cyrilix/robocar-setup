@@ -11,4 +11,4 @@ resources:
 
 images:
   - name: docker.io/cyrilix/robocar-simulator
-    newTag: v0.4.0
+    newTag: v0.4.1
