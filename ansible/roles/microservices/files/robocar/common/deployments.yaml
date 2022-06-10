@@ -522,7 +522,7 @@ spec:
         image: docker.io/cyrilix/robocar-record
         args:
         - "-mqtt-retain=true"
-        - "-debug=true"
+        - "-debug=false"
         securityContext:
           runAsUser: 1234
           runAsGroup: 1234
