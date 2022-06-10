@@ -577,7 +577,7 @@ metadata:
     reloader.stakater.com/auto: "true"
 spec:
   revisionHistoryLimit: 0
-  replicas: 1
+  replicas: 0
   strategy:
     type: Recreate
   selector:
