@@ -207,9 +207,6 @@ spec:
         args:
         - "--model=/model/$(MODEL_STEERING)"
         - "--edge-verbosity=0"
-        - "--img-width=$(MODEL_IMAGE_WIDTH)"
-        - "--img-height=$(MODEL_IMAGE_HEIGHT)"
-        - "--horizon=$(HORIZON)"
         - "--log=info"
         securityContext:
           runAsUser: 0

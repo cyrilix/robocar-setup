@@ -93,7 +93,9 @@ metadata:
   name: robocar-models
 data:
   # model to use for steering
-  MODEL_STEERING: model_160x120h0_edgetpu.tflite
+  #MODEL_STEERING: model_categorical_160x120h20_edgetpu.tflite
+  MODEL_STEERING: model_linear_160x120h20_edgetpu.tflite
+  MODEL_STEERING5: model_160x120h0_edgetpu.tflite
   MODEL_STEERING3: model_edgetpu.tflite
   MODEL_STEERING4: model_160x120h20_edgetpu.tflite
   MODEL_STEERING2: model-sim-bigimg_edgetpu.tflite
