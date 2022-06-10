@@ -40,7 +40,7 @@ data:
   ############
   # Throttle #
   ############
-  THROTTLE_MIN: "0.3"
+  THROTTLE_MIN: "0.25"
   THROTTLE_MAX: "0.4"
 ---
 apiVersion: v1
@@ -63,9 +63,12 @@ data:
   ################
   # THROTTLE PWM #
   ################
-  THROTTLE_MIN_PWM: "1092"
-  THROTTLE_MAX_PWM: "1986"
-  THROTTLE_ZERO_PWM: "1583"
+  #THROTTLE_MIN_PWM: "1092"
+  #THROTTLE_MAX_PWM: "1986"
+  #THROTTLE_ZERO_PWM: "1583"
+  THROTTLE_MIN_PWM: "967"
+  THROTTLE_MAX_PWM: "1966"
+  THROTTLE_ZERO_PWM: "1460"
 ---
 apiVersion: v1
 kind: ConfigMap
