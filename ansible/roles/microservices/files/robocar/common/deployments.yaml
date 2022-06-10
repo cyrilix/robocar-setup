@@ -243,7 +243,7 @@ spec:
         - name: MQTT_TOPIC_CAMERA
           valueFrom:
             configMapKeyRef:
-              key: MQTT_TOPIC_CAMERA
+              key: MQTT_TOPIC_CAMERA_OAK_COLOR
               name: robocar
         - name: MQTT_TOPIC_STEERING
           valueFrom:
