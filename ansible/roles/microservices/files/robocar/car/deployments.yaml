@@ -192,7 +192,8 @@ spec:
           - "--steering-left-pwm=$(STEERING_LEFT_PWM)"
           - "--steering-right-pwm=$(STEERING_RIGHT_PWM)"
           - "--steering-center-pwm=$(STEERING_CENTER_PWM)"
-          - "--update-pwm-frequency=25"
+          - "--pwm-freq=60"
+          - "--update-pwm-frequency=5"
           - "--log=info"
           securityContext:
             runAsUser: 1234
