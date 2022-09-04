@@ -11,6 +11,8 @@ data:
   MQTT_TOPIC_CAMERA: car/satanas/part/camera/color
   MQTT_TOPIC_CAMERA_OAK_COLOR: car/satanas/part/camera/color
 
+  # Objects detection
+  MQTT_TOPIC_OBJECTS: car/satanas/part/objects
 
   # Radio command
   MQTT_TOPIC_RC_THROTTLE: car/satanas/part/rc/throttle
@@ -31,6 +33,9 @@ data:
   # Records topic
   MQTT_TOPIC_RECORDS: car/satanas/part/records
 
+  # Feedbacks
+  MQTT_TOPIC_THROTTLE_FEEDBACK: car/satanas/part/feedback/throttle
+
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -40,13 +45,8 @@ data:
   ############
   # Throttle #
   ############
-  # Min value to start is 0.12
-  # Good value for manual: 0.15
-  #THROTTLE_MIN: "0.15"
-  #THROTTLE_MAX: "0.15"
-
-  THROTTLE_MIN: "0.19"
-  THROTTLE_MAX: "0.19"
+  THROTTLE_MIN: "0.2"
+  THROTTLE_MAX: "0.3"
 
 
 ---
@@ -58,9 +58,17 @@ data:
   ################
   # STEERING PWM #
   ################
-  STEERING_LEFT_PWM: "1002"
+  STEERING_LEFT_PWM: "1000"
   STEERING_RIGHT_PWM: "1985"
-  STEERING_CENTER_PWM: "1491"
+  STEERING_CENTER_PWM: "1492"
+
+  ############################
+  # STEERING PWM - SECOND RC #
+  ############################
+  STEERING_SECONDARY_LEFT_PWM: "1119"
+  STEERING_SECONDARY_RIGHT_PWM: "2141"
+  STEERING_SECONDARY_CENTER_PWM: "1641"
+
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -70,12 +78,17 @@ data:
   ################
   # THROTTLE PWM #
   ################
-  #THROTTLE_MIN_PWM: "1092"
-  #THROTTLE_MAX_PWM: "1986"
-  #THROTTLE_ZERO_PWM: "1583"
-  THROTTLE_MIN_PWM: "960"
-  THROTTLE_MAX_PWM: "1949"
-  THROTTLE_ZERO_PWM: "1452"
+  THROTTLE_MIN_PWM: "994"
+  THROTTLE_MAX_PWM: "1979"
+  THROTTLE_ZERO_PWM: "1484"
+
+  ###########################
+  # THROTTLE PWM - SECOND RC #
+  ############################
+  THROTTLE_SECONDARY_MIN_PWM: "994"
+  THROTTLE_SECONDARY_MAX_PWM: "1975"
+  THROTTLE_SECONDARY_ZERO_PWM: "1506"
+
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -123,3 +136,48 @@ metadata:
   name: robocar-road
 data:
   HORIZON: "20"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: steering
+data:
+  grid.json: |
+    {
+      "steering_steps": [ -1, -0.66, -0.33, 0, 0.33, 0.66, 1],
+      "distance_steps": [ 0, 0.3, 0.4, 0.5, 0.8, 1],
+      "data": [
+        [ 0, 0, 0, 0, 0, 0],
+        [ 0, 0, 0, 0, 0, 0],
+        [ 0, 0, 0.25, -0.25, 0, 0],
+        [ 0, 0.25, 0.5, -0.5, -0.25, 0],
+        [ 0.25, 0.5, 1, -1, -0.5, -0.25]
+      ]
+    }
+
+  "omf.json": | 
+    {
+      "steering_steps":[-1, -0.66, -0.33, 0, 0.33, 0.66, 1],
+      "distance_steps": [0, 0.2, 0.4, 0.6, 0.8, 1],
+      "data": [
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0.25, 0, 0, -0.25, 0],
+        [0.5, 0.25, 0, 0, -0.5, -0.25]
+      ]
+    }
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: android
+data:
+  thresholds.json: |
+    {
+      "threshold_steps": [ 0.07, 0.08, 0.09, 0.1, 0.125, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 ],
+      "min_valid": 500,
+      "data": [ 8700, 4800, 3500, 2550, 1850, 1387, 992, 840, 750, 700, 655, 620, 590, 570, 553, 549, 548 ]
+    }

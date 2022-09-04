@@ -107,6 +107,7 @@ spec:
           args:
             - "--image-width=$(CAMERA_WIDTH)"
             - "--image-height=$(CAMERA_HEIGHT)"
+            - "--objects-threshold=$(THRESHOLD_OBJECTS)"
           securityContext:
             runAsUser: 1234
             privileged: true
@@ -135,6 +136,16 @@ spec:
                 configMapKeyRef:
                   key: MQTT_TOPIC_CAMERA_OAK_COLOR
                   name: robocar
+            - name: MQTT_TOPIC_OBJECTS
+              valueFrom:
+                configMapKeyRef:
+                  key: MQTT_TOPIC_OBJECTS
+                  name: robocar
+            - name: THRESHOLD_OBJECTS
+              valueFrom:
+                configMapKeyRef:
+                  key: THRESHOLD
+                  name: robocar-objects
             - name: CAMERA_WIDTH
               valueFrom:
                 configMapKeyRef:
@@ -186,13 +197,13 @@ spec:
           - "--mqtt-retain=false"
           - "--throttle-channel=15"
           - "--steering-channel=14"
-          - "--throttle-zero-pwm=$(THROTTLE_ZERO_PWM)"
-          - "--throttle-min-pwm=$(THROTTLE_MIN_PWM)"
-          - "--throttle-max-pwm=$(THROTTLE_MAX_PWM)"
-          - "--steering-left-pwm=$(STEERING_LEFT_PWM)"
-          - "--steering-right-pwm=$(STEERING_RIGHT_PWM)"
-          - "--steering-center-pwm=$(STEERING_CENTER_PWM)"
-          - "--pwm-freq=60"
+          - "--throttle-zero-pwm=$(THROTTLE_PCA9685_ZERO_PWM)"
+          - "--throttle-min-pwm=$(THROTTLE_PCA9685_MIN_PWM)"
+          - "--throttle-max-pwm=$(THROTTLE_PCA9685_MAX_PWM)"
+          - "--steering-left-pwm=$(STEERING_PCA9685_LEFT_PWM)"
+          - "--steering-right-pwm=$(STEERING_PCA9685_RIGHT_PWM)"
+          - "--steering-center-pwm=$(STEERING_PCA9685_CENTER_PWM)"
+          - "--pwm-freq=50"
           - "--update-pwm-frequency=25"
           - "--log=info"
           securityContext:
@@ -202,6 +213,9 @@ spec:
           volumeMounts:
             - mountPath: /dev/i2c-1
               name: i2c
+          envFrom:
+            - configMapRef:
+                name: robocar-pca9685-pwm
           env:
             - name: MQTT_BROKER
               valueFrom:
@@ -232,36 +246,6 @@ spec:
                   name: robocar
             - name: MQTT_QOS
               value: "0"
-            - name: STEERING_LEFT_PWM
-              valueFrom:
-                configMapKeyRef:
-                  name: robocar-steering-pwm
-                  key: STEERING_LEFT_PWM
-            - name: STEERING_RIGHT_PWM
-              valueFrom:
-                configMapKeyRef:
-                  name: robocar-steering-pwm
-                  key: STEERING_RIGHT_PWM
-            - name: STEERING_CENTER_PWM
-              valueFrom:
-                configMapKeyRef:
-                  name: robocar-steering-pwm
-                  key: STEERING_CENTER_PWM
-            - name: THROTTLE_MIN_PWM
-              valueFrom:
-                configMapKeyRef:
-                  name: robocar-throttle-pwm
-                  key: THROTTLE_MIN_PWM
-            - name: THROTTLE_MAX_PWM
-              valueFrom:
-                configMapKeyRef:
-                  name: robocar-throttle-pwm
-                  key: THROTTLE_MAX_PWM
-            - name: THROTTLE_ZERO_PWM
-              valueFrom:
-                configMapKeyRef:
-                  name: robocar-throttle-pwm
-                  key: THROTTLE_ZERO_PWM
             - name: TZ
               value: "Europe/Paris"
       volumes:
