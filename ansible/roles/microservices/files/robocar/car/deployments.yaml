@@ -117,8 +117,10 @@ spec:
             - name: dev
               mountPath: /dev
           env:
-            - name: MQTT_BROKER
+            - name: MQTT_BROKER_HOST
               value: localhost # because use host network
+            - name: MQTT_BROKER_PORT
+              value: "30183"
             - name: MQTT_USERNAME
               valueFrom:
                 secretKeyRef:

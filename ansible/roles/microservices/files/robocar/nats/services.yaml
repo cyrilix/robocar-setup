@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nats-server-ext
+spec:
+  type: NodePort
+  ports:
+    - port: 4222
+      name: tcp-nats-client
+      targetPort: tcp-nats-client
+      nodePort: 30422
+    - name: http-monitoring
+      port: 8222
+      targetPort: http-monitoring
+      nodePort: 30822
+    - name: tcp-mqtt
+      port: 1883
+      targetPort: tcp-mqtt
+      nodePort: 30183
+  selector:
+    appli: nats-server
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nats-server
+spec:
+  type: ClusterIP
+  ports:
+    - port: 4222
+      name: tcp-nats-client
+      targetPort: tcp-nats-client
+    - name: http-monitoring
+      port: 8222
+      targetPort: http-monitoring
+    - name: tcp-mqtt
+      port: 1883
+      targetPort: tcp-mqtt
+  selector:
+    appli: nats-server

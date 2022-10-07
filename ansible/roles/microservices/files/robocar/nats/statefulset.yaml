@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nats-server
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  selector:
+    matchLabels:
+      appli: nats-server
+  serviceName: nats
+  replicas: 1
+  revisionHistoryLimit: 0
+  template:
+      metadata:
+        name: nats-server
+        labels:
+          appli: nats-server
+      spec:
+        serviceAccountName: nats-server
+        containers:
+          - name: nats-server
+            image: docker.io/library/nats:latest
+            args:
+              - --http_port=8222
+              - --config=/etc/nats/standalone.conf
+            ports:
+              - containerPort: 4222
+                name: tcp-nats-client
+              - name: http-monitoring
+                containerPort: 8222
+              - name: tcp-mqtt
+                containerPort: 1883
+            volumeMounts:
+              - mountPath: /etc/nats
+                name: nats-config
+              - name: nats-data
+                mountPath: /data
+        securityContext:
+          runAsUser: 1234
+          runAsGroup: 1234
+          fsGroup: 1234
+          fsGroupChangePolicy: Always
+        volumes:
+          - name: nats-config
+            configMap:
+              name: nats
+
+  volumeClaimTemplates:
+    - metadata:
+        name: nats-data
+      spec:
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: local-path
+        accessModes:
+          - ReadWriteOnce

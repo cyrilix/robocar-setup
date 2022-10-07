@@ -4,8 +4,9 @@ metadata:
   name: robocar
 data:
   # Broker configuration
-  MQTT_BROKER_HOST: mqtt.robocar.svc.cluster.local
-  MQTT_BROKER: "tcp://mqtt.robocar.svc.cluster.local:1883"
+  MQTT_BROKER_HOST: nats-server.nats.svc.cluster.local
+  #MQTT_BROKER: "tcp://mqtt.robocar.svc.cluster.local:1883"
+  MQTT_BROKER: "tcp://nats-server.nats.svc.cluster.local:1883"
 
   # Camera
   MQTT_TOPIC_CAMERA: car/satanas/part/camera/color
