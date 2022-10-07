@@ -9,17 +9,16 @@ resources:
 
 images:
   - name: docker.io/cyrilix/robocar-arduino
-    newTag: v0.8.0-6-gadb38c3
+    newTag: v0.9.0
 
   - name: docker.io/cyrilix/robocar-led
     newTag: v0.5.1
 
   - name: docker.io/cyrilix/robocar-steering-tflite-edgetpu
-    #newTag: v0.5.0
-    newTag: v0.5.0-1-gbc90193
+    newTag: v0.5.3
 
   - name: docker.io/cyrilix/robocar-throttle
-    newTag: v0.5.0
+    newTag: v0.6.0
 
   - name: docker.io/cyrilix/robocar-record
     newTag: v0.5.1
@@ -28,7 +27,7 @@ images:
     newTag: v0.2.1
 
   - name: docker.io/cyrilix/robocar-steering
-    newTag: v0.5.1-24-g424b697
+    newTag: v0.6.0
 
   - name: docker.io/cyrilix/robocar-road
     newTag: v0.2.0

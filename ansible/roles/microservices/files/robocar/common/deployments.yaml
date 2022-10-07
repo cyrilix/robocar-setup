@@ -418,8 +418,10 @@ spec:
       - name: throttle
         image: docker.io/cyrilix/robocar-throttle
         args:
-        - "-mqtt-retain=false"
-        - "-log=info"
+        - "--mqtt-retain=false"
+        - "--enable-brake-feature=true"
+        - "--brake-configuration=/etc/robocar/brake.json"
+        - "--log=info"
         securityContext:
           runAsUser: 1234
           runAsGroup: 1234
@@ -456,6 +458,16 @@ spec:
             configMapKeyRef:
               key: MQTT_TOPIC_RC_DRIVE_MODE
               name: robocar
+        - name: MQTT_TOPIC_THROTTLE_FEEDBACK
+          valueFrom:
+            configMapKeyRef:
+              name: robocar
+              key: MQTT_TOPIC_THROTTLE_FEEDBACK
+        - name: MQTT_TOPIC_STEERING
+          valueFrom:
+            configMapKeyRef:
+              key: MQTT_TOPIC_STEERING
+              name: robocar
         - name: THROTTLE_MIN
           valueFrom:
             configMapKeyRef:
@@ -470,6 +482,13 @@ spec:
           value: "0"
         - name: TZ
           value: "Europe/Paris"
+        volumeMounts:
+          - mountPath: /etc/robocar
+            name: throttle-config
+      volumes:
+        - name: throttle-config
+          configMap:
+            name: throttle
 ---
 apiVersion: apps/v1
 kind: Deployment
