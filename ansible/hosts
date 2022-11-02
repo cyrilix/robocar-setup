@@ -1,9 +1,5 @@
 [car]
-satanas.local ansible_user=pi become=yes  become_user=root
 diabolo.local ansible_user=pi become=yes  become_user=root
 
 [microservice]
 diabolo.local
-
-[donkey]
-satanas.local
