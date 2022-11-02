@@ -321,7 +321,7 @@ spec:
           - "-mqtt-retain=false"
           - "--image-width=$(IMAGE_WIDTH)"
           - "--image-height=$(IMAGE_HEIGHT)"
-          - "--enable-objects-correction=true"
+          - "--enable-objects-correction=false"
           - "--enable-objects-correction-user=false"
           - "--grid-map-config=/etc/robocar/grid.json"
           - "--objects-move-factors-config=/etc/robocar/omf.json"
