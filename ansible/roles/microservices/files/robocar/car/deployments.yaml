@@ -103,11 +103,12 @@ spec:
     spec:
       containers:
         - name: camera
-          image: docker.io/cyrilix/robocar-oak-camera
+          image: git.cyrilix.bzh/robocars/robocar-oak-camera
           args:
             - "--image-width=$(CAMERA_WIDTH)"
             - "--image-height=$(CAMERA_HEIGHT)"
             - "--objects-threshold=$(THRESHOLD_OBJECTS)"
+            - "--log=info"
           securityContext:
             runAsUser: 1234
             privileged: true
@@ -146,7 +147,7 @@ spec:
             - name: THRESHOLD_OBJECTS
               valueFrom:
                 configMapKeyRef:
-                  key: THRESHOLD
+                  key: OBJECTS_THRESHOLD
                   name: robocar-objects
             - name: CAMERA_WIDTH
               valueFrom:
