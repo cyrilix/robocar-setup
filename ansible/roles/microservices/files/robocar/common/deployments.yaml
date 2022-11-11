@@ -107,7 +107,7 @@ spec:
             type: CharDevice
         - name: robocar
           configMap:
-            name: android
+            name: robocar-objects
 
 ---
 apiVersion: apps/v1
